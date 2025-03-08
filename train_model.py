@@ -10,7 +10,7 @@ from extract_training_data import FeatureExtractor
 
 class DependencyDataset(Dataset):
 
-  def __init__(self, inputs_filename, output_filename):
+  def __init__(self, input_filename, output_filename):
     self.inputs = np.load(input_filename)
     self.outputs = np.load(output_filename)
 
@@ -26,16 +26,30 @@ class DependencyModel(Module):
   def __init__(self, word_types, outputs):
     super(DependencyModel, self).__init__()
     # TODO: complete for part 3
+    self.embedding = Embedding(num_embeddings=word_types, embedding_dim=128)
+    self.hiddenLayer = Linear(768,128) # TO BE FIXED 
+    self.outputLayer = Linear(128,outputs)
 
   def forward(self, inputs):
 
     # TODO: complete for part 3
-    return torch.zeros(inputs.shape(0), 91)  # replace this line
-
+    # input is a (batch_size, 6)
+    # print("Input size: ",inputs.size()) #16,6
+    embedded = self.embedding(inputs)
+    # print("Embedded size: ",embedded.size()) #16,6,128
+    inputs = embedded.view([embedded.size()[0],embedded.size()[1]*embedded.size()[2]]) # batch_size, 768
+    # print("Flatten size: ",inputs.size()) #(16,768)
+    hidden = self.hiddenLayer(inputs)
+    # print("Hidden size: ",hidden.size()) 
+    hidden = relu(hidden)
+    # print("Relu size: ",hidden.size())
+    output = self.outputLayer(hidden)
+    # print("Output size: ",output.size())
+    return output
 
 def train(model, loader): 
 
-  loss_function = NLLoss(reduction='mean')
+  loss_function = torch.nn.CrossEntropyLoss(reduction='mean')
 
   LEARNING_RATE = 0.01 
   optimizer = torch.optim.Adagrad(params=model.parameters(), lr=LEARNING_RATE)
@@ -53,7 +67,7 @@ def train(model, loader):
  
     inputs, targets = batch
  
-    predictions = model(torch.LongTensor(inputs))
+    predictions = model(torch.LongTensor(inputs.long()))
 
     loss = loss_function(predictions, targets)
     tr_loss += loss.item()
@@ -67,7 +81,7 @@ def train(model, loader):
       print(f"Current average loss: {curr_avg_loss}")
 
     # To compute training accuracy for this epoch 
-    correct += sum(torch.argmax(logits, dim=1) == torch.argmax(targets, dim=1))
+    correct += sum(torch.argmax(predictions, dim=1) == torch.argmax(targets, dim=1))
     total += len(inputs)
       
     # Run the backward pass to update parameters 
@@ -79,6 +93,8 @@ def train(model, loader):
   epoch_loss = tr_loss / tr_steps
   acc = correct / total
   print(f"Training loss epoch: {epoch_loss},   Accuracy: {acc}")
+  # In Prof's experiments, after 5 epochs reached a training loss of < 0.31 and a training accuracy of about 0.90.
+  # This version, for 5 epochs, I got Training loss epoch: 0.3069711856785976,   Accuracy: 0.9026280045509338
 
 
 if __name__ == "__main__":

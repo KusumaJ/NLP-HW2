@@ -113,11 +113,37 @@ class FeatureExtractor(object):
 
     def get_input_representation(self, words, pos, state):
         # TODO: Write this method for Part 2
-        return np.zeros(6)
+        input = np.array([])
+        for s in [state.stack,state.buffer]:
+            for i in range(1,4):
+                if(len(s)<i): 
+                    index = self.word_vocab["<NULL>"]
+                elif(s[-i]==0):
+                    index = self.word_vocab["<ROOT>"]
+                else:
+                    word_pos = pos[(s[-i])]
+                    if(word_pos=="CD"):
+                        index = self.word_vocab["<CD>"]
+                    elif(word_pos=="NNP"): 
+                        index = self.word_vocab["<NNP>"]
+                    else:
+                        word = words[s[-i]].lower()
+                        if (word in self.word_vocab): 
+                            index = self.word_vocab[word]
+                        else: index = self.word_vocab["<UNK>"]
+                input = np.append(input,index)
+
+        return input
 
     def get_output_representation(self, output_pair):  
         # TODO: Write this method for Part 2
-        return np.zeros(91)
+        output = np.zeros(91)
+
+        if(output_pair[0]=="shift"): output[0] = 1 # 0
+        elif(output_pair[0]=="left_arc"): output[1+dep_relations.index(output_pair[1])]=1 # 1 to 45
+        else: output[46+dep_relations.index(output_pair[1])]=1 # 46 to 90
+
+        return output
 
      
     
