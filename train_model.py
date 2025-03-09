@@ -37,7 +37,11 @@ class DependencyModel(Module):
     # print("Input size: ",inputs.size()) #16,6
     embedded = self.embedding(inputs)
     # print("Embedded size: ",embedded.size()) #16,6,128
-    inputs = embedded.view([embedded.size()[0],embedded.size()[1]*embedded.size()[2]]) # batch_size, 768
+    if(len(embedded.size())>2):
+      inputs = embedded.view([embedded.size()[0],embedded.size()[1]*embedded.size()[2]]) # batch_size, 768
+    else:
+      inputs = embedded.view([1,768])
+    # inputs = embedded.view([embedded.size()[0],768])
     # print("Flatten size: ",inputs.size()) #(16,768)
     hidden = self.hiddenLayer(inputs)
     # print("Hidden size: ",hidden.size()) 

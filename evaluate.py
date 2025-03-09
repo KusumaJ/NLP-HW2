@@ -19,16 +19,16 @@ def compare_parser(target, predict):
 if __name__ == "__main__":
 
     WORD_VOCAB_FILE = 'data/words.vocab'
-    POS_VOCAB_FILE = 'data/pos.vocab'
+    # POS_VOCAB_FILE = 'data/pos.vocab'
 
     try:
         word_vocab_f = open(WORD_VOCAB_FILE,'r')
-        pos_vocab_f = open(POS_VOCAB_FILE,'r') 
+        # pos_vocab_f = open(POS_VOCAB_FILE,'r') 
     except FileNotFoundError:
-        print("Could not find vocabulary files {} and {}".format(WORD_VOCAB_FILE, POS_VOCAB_FILE))
+        print("Could not find vocabulary files {} and {}".format(WORD_VOCAB_FILE))
         sys.exit(1) 
 
-    extractor = FeatureExtractor(word_vocab_f, pos_vocab_f)
+    extractor = FeatureExtractor(word_vocab_f)
     parser = Parser(extractor, sys.argv[1])
 
     total_labeled_correct = 0

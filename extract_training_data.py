@@ -93,7 +93,8 @@ class FeatureExtractor(object):
     def __init__(self, word_vocab_file):
         self.word_vocab = self.read_vocab(word_vocab_file)        
         self.output_labels = self.make_output_labels()
-
+    
+    # I didn't follow this way of index, is that ok? Just realized later
     def make_output_labels(self):
         labels = []
         labels.append(('shift',None))
