@@ -27,28 +27,17 @@ class DependencyModel(Module):
     super(DependencyModel, self).__init__()
     # TODO: complete for part 3
     self.embedding = Embedding(num_embeddings=word_types, embedding_dim=128)
-    self.hiddenLayer = Linear(768,128) # TO BE FIXED 
+    self.hiddenLayer = Linear(768,128) 
     self.outputLayer = Linear(128,outputs)
 
   def forward(self, inputs):
 
     # TODO: complete for part 3
-    # input is a (batch_size, 6)
-    # print("Input size: ",inputs.size()) #16,6
     embedded = self.embedding(inputs)
-    # print("Embedded size: ",embedded.size()) #16,6,128
-    if(len(embedded.size())>2):
-      inputs = embedded.view([embedded.size()[0],embedded.size()[1]*embedded.size()[2]]) # batch_size, 768
-    else:
-      inputs = embedded.view([1,768])
-    # inputs = embedded.view([embedded.size()[0],768])
-    # print("Flatten size: ",inputs.size()) #(16,768)
+    inputs = embedded.view([embedded.size()[0],embedded.size()[1]*embedded.size()[2]]) # batch_size, 768
     hidden = self.hiddenLayer(inputs)
-    # print("Hidden size: ",hidden.size()) 
     hidden = relu(hidden)
-    # print("Relu size: ",hidden.size())
     output = self.outputLayer(hidden)
-    # print("Output size: ",output.size())
     return output
 
 def train(model, loader): 
@@ -98,8 +87,7 @@ def train(model, loader):
   acc = correct / total
   print(f"Training loss epoch: {epoch_loss},   Accuracy: {acc}")
   # In Prof's experiments, after 5 epochs reached a training loss of < 0.31 and a training accuracy of about 0.90.
-  # This version, for 5 epochs, I got Training loss epoch: 0.3069711856785976,   Accuracy: 0.9026280045509338
-
+  # 5 epoch i got Training loss epoch: Training loss epoch: 0.30688479310471745,   Accuracy: 0.9026153683662415
 
 if __name__ == "__main__":
 

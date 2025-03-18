@@ -31,7 +31,7 @@ class Parser(object):
         # TODO: Write the body of this loop for part 5
         while state.buffer:
           features = self.extractor.get_input_representation(words,pos,state)
-          predictions = self.model(torch.tensor(features, dtype=torch.long)).detach().numpy()[0]
+          predictions = self.model(torch.tensor(np.array([features]), dtype=torch.long)).detach().numpy()[0] # fix shape problem in model
           flag = False
           for tr in np.sort(predictions)[::-1]:
               tr = np.where(predictions==tr)[0]
@@ -42,10 +42,8 @@ class Parser(object):
                     break
                 if(len(state.stack)!=0 and len(state.buffer)!=0):
                     if(t<=45): 
-                        # print("left")
                         state.left_arc(dep_relations[t-1])
                     else: 
-                        # print("right")
                         state.right_arc(dep_relations[t-46])
                     flag = True
                     break
@@ -76,13 +74,13 @@ if __name__ == "__main__":
             words = dtree.words()
             pos = dtree.pos()
             deps = parser.parse_sentence(words, pos)
-            print(deps.print_conll())
-            print(deps.print_tree())
+            # print(deps.print_conll())
+            # print(deps.print_tree())
 
 # >> python evaluate.py data/model.pt data/dev.conll
 
-# Micro Avg. Labeled Attachment Score: 0.7316421230886723
-# Micro Avg. Unlabeled Attachment Score: 0.7798881012069796
+# Micro Avg. Labeled Attachment Score: 0.7287362044643598
+# Micro Avg. Unlabeled Attachment Score: 0.7766243465272592
 
-# Macro Avg. Labeled Attachment Score: 0.7431484382034693
-# Macro Avg. Unlabeled Attachment Score: 0.7911402127390919
+# Macro Avg. Labeled Attachment Score: 0.7402238235694223
+# Macro Avg. Unlabeled Attachment Score: 0.7875131839688375

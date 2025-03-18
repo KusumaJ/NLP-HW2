@@ -94,7 +94,7 @@ class FeatureExtractor(object):
         self.word_vocab = self.read_vocab(word_vocab_file)        
         self.output_labels = self.make_output_labels()
     
-    # I didn't follow this way of index, is that ok? Just realized later
+    # I didn't follow this way of index as I realized later [Ed Thread#198]
     def make_output_labels(self):
         labels = []
         labels.append(('shift',None))
@@ -145,6 +145,7 @@ class FeatureExtractor(object):
         else: output[46+dep_relations.index(output_pair[1])]=1 # 46 to 90
 
         return output
+        # return self.output_labels[output_pair]
 
      
     
